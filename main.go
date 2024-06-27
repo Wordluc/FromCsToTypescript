@@ -1,4 +1,5 @@
 package main
+
 import ("net")
 func main() {
 	n,_:=net.Dial("udp", "0.0.0.0:300")
