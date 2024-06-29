@@ -51,7 +51,7 @@ func Test_TokenizingSimpleClass(t *testing.T) {
 }
 
 func Test_TokenizingClassWithGeneric(t *testing.T) {
-	l, err := New("public class prova{public pippo<cia> test;}")
+	l, err := New("public class prova{public pippo<cia,pippo> test;}")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -64,6 +64,8 @@ func Test_TokenizingClassWithGeneric(t *testing.T) {
 		{Type: Word, Val: "pippo"},
 		{Type: OpenAngle, Val: "<"},
 		{Type: Word, Val: "cia"},
+		{Type: Comma, Val: ","},
+		{Type: Word, Val: "pippo"},
 		{Type: CloseAngle, Val: ">"},
 		{Type: Word, Val: "test"},
 		{Type: Semicolon, Val: ";"},
@@ -93,7 +95,7 @@ func Test_TokenizingSimpleClassWithNullableProperty(t *testing.T) {
 }
 
 func Test_TokenizingSimpleRecord(t *testing.T) {
-	l, err := New("public record prova(string test);")
+	l, err := New("public record prova(string test,string test1);")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -104,8 +106,12 @@ func Test_TokenizingSimpleRecord(t *testing.T) {
 		{Type: OpenCircle, Val: "("},
 		{Type: Word, Val: "string"},
 		{Type: Word, Val: "test"},
+		{Type: Comma, Val: ","},
+		{Type: Word, Val: "string"},
+		{Type: Word, Val: "test1"},
 		{Type: CloseCircle, Val: ")"},
 		{Type: Semicolon, Val: ";"},
 	}
 	confrontTokens(t, l, expTokens)
 }
+

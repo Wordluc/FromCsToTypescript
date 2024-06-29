@@ -1,6 +1,9 @@
 package Lexer
 
-import "regexp"
+import (
+	"errors"
+	"regexp"
+)
 
 type TokenKind int8
 
@@ -13,7 +16,7 @@ type Lexer struct {
 	cur    int
 }
 
-const regex = `\w+|[{|}]|[<|>]|[(|)]|;|\?`
+const regex = `\w+|[{|}]|[<|>]|[(|)]|;|\?|,`
 const (
 	Error TokenKind = -2
 	Unknow TokenKind = -1
@@ -26,6 +29,7 @@ const (
 	CloseCircle
 	Semicolon
 	QuestionMark
+	Comma
 
 )
 func New(input string) (*Lexer,error) {
@@ -50,6 +54,17 @@ func (l *Lexer) GetAndGoNext ()Token {
 	return t
 }
 
+func (l *Lexer) Pick ()Token {
+	t := l.tokens[l.cur]
+	return t
+}
+func (l *Lexer) Increse () error {
+	if l.cur+1 >= len(l.tokens) {
+		return errors.New("out of range")
+	}
+	l.cur++
+	return nil
+}
 func (l *Lexer) PickNext ()Token {
 	if l.cur+1 >= len(l.tokens) {
 		return Token{Type: Error, Val: ""}
@@ -84,6 +99,8 @@ func getType(t string) TokenKind {
 		return Semicolon
 	case "?":
 		return QuestionMark
+	case ",":
+		return Comma
 	default:
 		if (t[0] >= 'a' && t[0] <= 'z')||(t[0] >= 'A' && t[0] <= 'Z'){
 			return Word
