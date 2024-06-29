@@ -10,11 +10,13 @@ type Token struct {
 }
 type Lexer struct {
 	tokens []Token
+	cur    int
 }
 
-const regex = `\w+|[{|}]|[<|>]|[(|)]|;`
+const regex = `\w+|[{|}]|[<|>]|[(|)]|;|\?`
 const (
-	Error TokenKind = -1
+	Error TokenKind = -2
+	Unknow TokenKind = -1
   Word TokenKind = iota
 	OpenCurly
 	CloseCurly
@@ -23,6 +25,7 @@ const (
 	CloseAngle
 	CloseCircle
 	Semicolon
+	QuestionMark
 
 )
 func New(input string) (*Lexer,error) {
@@ -38,6 +41,31 @@ func New(input string) (*Lexer,error) {
 	return &lexer,nil
 }
 
+func (l *Lexer) GetAndGoNext ()Token {
+	if l.cur >= len(l.tokens) {
+		return Token{Type: Error, Val: ""}
+	}
+	t := l.tokens[l.cur]
+	l.cur++
+	return t
+}
+
+func (l *Lexer) PickNext ()Token {
+	if l.cur+1 >= len(l.tokens) {
+		return Token{Type: Error, Val: ""}
+	}
+	t := l.tokens[l.cur+1]
+	return t
+}
+
+func (l *Lexer) PickPre ()Token {
+	if l.cur-1 < 0 {
+		return Token{Type: Error, Val: ""}
+	}
+	t := l.tokens[l.cur-1]
+	return t
+}
+
 func getType(t string) TokenKind {
 	switch t {
 	case "{":
@@ -45,19 +73,21 @@ func getType(t string) TokenKind {
 	case "}":
 		return CloseCurly
 	case "<":
-		return OpenCircle
-	case ">":
-		return CloseCircle
-	case "(":
 		return OpenAngle
-	case ")":
+	case ">":
 		return CloseAngle
+	case "(":
+		return OpenCircle
+	case ")":
+		return CloseCircle
 	case ";":
 		return Semicolon
+	case "?":
+		return QuestionMark
 	default:
 		if (t[0] >= 'a' && t[0] <= 'z')||(t[0] >= 'A' && t[0] <= 'Z'){
 			return Word
 		}
-		return Error
+		return Unknow
 	}
 }
