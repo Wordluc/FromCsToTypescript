@@ -57,7 +57,6 @@ func Test_parseParamCustom(t *testing.T) {
 	if !ok {
 		t.Error("test:param type not custom found")
 	}
-	println(typ.Type)
 	if typ.Type!="persona" {
 		t.Error("test:param type not persona")
 	}
@@ -187,14 +186,14 @@ func Test_parseClassWithNullable(t *testing.T) {
 	}
 }
 func Test_parseClassWithNullableGeneric(t *testing.T) {
-	l, _ := Lexer.New(`
+	parsed, err := Parse(`
    public class prova{
 		 public pers<int>? name;
    }`)
-	class, err := parseClass(l)
 	if err != nil {
 		panic(err)
 	}
+	class:= parsed.(Class)
 	if class.Name!="prova" {
 		t.Error("test:class name not found")
 	}
@@ -210,5 +209,46 @@ func Test_parseClassWithNullableGeneric(t *testing.T) {
 	}
 	if gType.Nullable==false {
 		t.Error("test:class field not nullable")
+	}
+}
+
+
+func Test_parseRecord(t *testing.T) {
+	parsed, e := Parse("public record persona(string nome, string cognome,eta<int>? e);")
+
+	if e != nil {
+		panic(e)
+	}
+	record:=parsed.(Class)
+
+	if record.Name!="persona" {
+		t.Error("test:class name not found")
+	}
+	if len(record.Fields)!=3 {
+		t.Error("test:class fields not found")
+	}
+	if record.Fields[0].Name!="nome" {
+		t.Error("test:class field name not found")
+	}
+	if record.Fields[0].Type.(SimpleTypeNode).Type!=String {
+		t.Error("test:class field type not string")
+	}
+	if record.Fields[1].Name!="cognome" {
+		t.Error("test:class field name not found")
+	}
+	if record.Fields[1].Type.(SimpleTypeNode).Type!=String {
+		t.Error("test:class field type not string")
+	}
+	if record.Fields[2].Name!="e" {
+		t.Error("test:class field name not found")
+	}
+	if record.Fields[2].Type.(GenericTypeNode).ChildType[0].(SimpleTypeNode).Type!=Number {
+		t.Error("test:class field type not number")
+	}
+	if record.Fields[2].Nullable==false {
+		t.Error("test:class field not nullable")
+	}
+	if record.Fields[2].Type.(GenericTypeNode).ParentName!="eta" {
+		t.Error("test:class field name not correct")
 	}
 }

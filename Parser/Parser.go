@@ -5,7 +5,7 @@ import (
 	"errors"
 )
 
-type INode struct {
+type INode interface {
 }
 
 type Class struct {
@@ -44,6 +44,7 @@ const (
 	Boolean
 )
 const classIdentifier = "class"
+const recordIdentifier = "record"
 
 func isVisibilitySetter(t string) bool {
 	switch t {
@@ -66,23 +67,53 @@ func isBasicType(t string) Type {
 	}
 }
 
-func Parse(input string) ([]INode, error) {
-	_, err := Lexer.New(input)
+func Parse(input string) (INode, error) {
+	l, err := Lexer.New(input)
 	if err != nil {
 		return nil, err
 	}
-
-	return nil, nil
+  token:=l.PickNext()
+	if token.Val == classIdentifier {
+		return parseClass(l)
+	}else if token.Val == recordIdentifier {
+		return parseRecord(l)
+	}
+	return nil,errors.New("identifier not managed")
 }
-
+func parseRecord(l *Lexer.Lexer) (INode, error) {
+	class := Class{}
+	token := l.GetAndGoNext()
+	if isVisibilitySetter(token.Val) {
+	}
+	l.Increse()
+	token = l.GetAndGoNext()
+	if token.Type != Lexer.Word {
+		return class, errors.New("name not found")
+	}
+	class.Name = token.Val
+	token = l.GetAndGoNext()
+	if token.Type != Lexer.OpenCircle {
+		return class, errors.New("( not found")
+	}
+	token=l.Pick()
+	parms := []FieldNode{}
+	for token.Type != Lexer.CloseCircle && token.Type != Lexer.Semicolon{
+		parm,err:=parseParam(l)
+		if err!=nil{
+			return class,err
+		}
+		parms = append(parms,parm)
+		l.Increse()
+    token =l.Pick()
+	}
+	class.Fields = parms
+	token = l.GetAndGoNext()
+	return class, nil
+}
 func parseClass(l *Lexer.Lexer) (Class, error) {
 	class := Class{}
 	token := l.GetAndGoNext()
 	if isVisibilitySetter(token.Val) {
-		token = l.Pick()
-	}
-	if token.Val != classIdentifier {
-		return class, errors.New("classes not supported yet")
 	}
 	l.Increse()
 	token = l.GetAndGoNext()
