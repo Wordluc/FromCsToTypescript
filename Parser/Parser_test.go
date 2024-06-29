@@ -212,7 +212,6 @@ func Test_parseClassWithNullableGeneric(t *testing.T) {
 	}
 }
 
-
 func Test_parseRecord(t *testing.T) {
 	parsed, e := Parse("public record persona(string nome, string cognome,eta<int>? e);")
 
@@ -250,5 +249,32 @@ func Test_parseRecord(t *testing.T) {
 	}
 	if record.Fields[2].Type.(GenericTypeNode).ParentName!="eta" {
 		t.Error("test:class field name not correct")
+	}
+}
+func Test_parseRecordMixed(t *testing.T) {
+	parsed, e := Parse("public record persona(string nome){string cognome};")
+
+	if e != nil {
+		panic(e)
+	}
+	record:=parsed.(Class)
+
+	if record.Name!="persona" {
+		t.Error("test:class name not found")
+	}
+	if len(record.Fields)!=2{
+		t.Error("test:class fields not found")
+	}
+	if record.Fields[0].Name!="nome" {
+		t.Error("test:class field name not found")
+	}
+	if record.Fields[0].Type.(SimpleTypeNode).Type!=String {
+		t.Error("test:class field type not string")
+	}
+	if record.Fields[1].Name!="cognome" {
+		t.Error("test:class field name not found")
+	}
+	if record.Fields[1].Type.(SimpleTypeNode).Type!=String {
+		t.Error("test:class field type not string")
 	}
 }

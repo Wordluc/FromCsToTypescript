@@ -97,14 +97,19 @@ func parseRecord(l *Lexer.Lexer) (INode, error) {
 	}
 	token=l.Pick()
 	parms := []FieldNode{}
-	for token.Type != Lexer.CloseCircle && token.Type != Lexer.Semicolon{
+	for token.Type != Lexer.CloseCircle && token.Type != Lexer.CloseCurly && token.Type != Lexer.Semicolon{
 		parm,err:=parseParam(l)
 		if err!=nil{
 			return class,err
 		}
 		parms = append(parms,parm)
 		l.Increse()
-    token =l.Pick()
+    if l.Pick().Type == Lexer.OpenCurly {
+			l.Increse()
+		}
+
+		token =l.Pick()
+
 	}
 	class.Fields = parms
 	token = l.GetAndGoNext()
