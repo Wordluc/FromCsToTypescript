@@ -67,10 +67,10 @@ func isBasicType(t string) Type {
 	}
 }
 
-func Parse(input string) (INode, error) {
+func Parse(input string) (Class, error) {
 	l, err := Lexer.New(input)
 	if err != nil {
-		return nil, err
+		return Class{}, err
 	}
 	token := l.PickNext()
 	if token.Val == classIdentifier {
@@ -78,9 +78,9 @@ func Parse(input string) (INode, error) {
 	} else if token.Val == recordIdentifier {
 		return parseRecord(l)
 	}
-	return nil, errors.New("identifier not managed")
+	return Class{}, errors.New("identifier not managed")
 }
-func parseRecord(l *Lexer.Lexer) (INode, error) {
+func parseRecord(l *Lexer.Lexer) (Class, error) {
 	class := Class{}
 	token := l.GetAndGoNext()
 	if isVisibilitySetter(token.Val) {

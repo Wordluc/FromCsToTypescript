@@ -193,7 +193,7 @@ func Test_parseClassWithNullableGeneric(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	class:= parsed.(Class)
+	class:= parsed	
 	if class.Name!="prova" {
 		t.Error("test:class name not found")
 	}
@@ -218,7 +218,7 @@ func Test_parseRecord(t *testing.T) {
 	if e != nil {
 		panic(e)
 	}
-	record:=parsed.(Class)
+	record:=parsed
 
 	if record.Name!="persona" {
 		t.Error("test:class name not found")
@@ -252,12 +252,12 @@ func Test_parseRecord(t *testing.T) {
 	}
 }
 func Test_parseRecordMixed(t *testing.T) {
-	parsed, e := Parse("public record persona(string nome){string cognome};")
+	record, e := Parse("public record persona(string nome){string cognome};")
 
 	if e != nil {
 		panic(e)
 	}
-	record:=parsed.(Class)
+
 
 	if record.Name!="persona" {
 		t.Error("test:class name not found")
@@ -279,7 +279,7 @@ func Test_parseRecordMixed(t *testing.T) {
 	}
 }
 func Test_parseClassWithGetSet(t *testing.T) {
-	parsed, err := Parse(`
+	class, err := Parse(`
    public class prova{
 		 public pers<int>? name{get;set;}
 		 public pers<int>? cognome{get;set;}="dddd";
@@ -288,7 +288,6 @@ func Test_parseClassWithGetSet(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	class:= parsed.(Class)
 	if class.Name!="prova" {
 		t.Error("test:class name not found")
 	}
