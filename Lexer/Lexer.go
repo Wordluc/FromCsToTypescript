@@ -16,11 +16,11 @@ type Lexer struct {
 	cur    int
 }
 
-const regex = `\w+|[{|}]|[<|>]|[(|)]|;|\?|,`
+const regex = `\w+|[{|}]|[<|>]|[(|)]|;|\?|,|\=|[//]{2}.*|/\*|\*/`
 const (
-	Error TokenKind = -2
+	Error  TokenKind = -2
 	Unknow TokenKind = -1
-  Word TokenKind = iota
+	Word   TokenKind = iota
 	OpenCurly
 	CloseCurly
 	OpenCircle
@@ -30,22 +30,35 @@ const (
 	Semicolon
 	QuestionMark
 	Comma
-
+	Assignment
 )
-func New(input string) (*Lexer,error) {
-	reg,e:=regexp.Compile(regex)
-	if e!=nil{
-		return nil,e
+
+func New(input string) (*Lexer, error) {
+	reg, e := regexp.Compile(regex)
+	if e != nil {
+		return nil, e
 	}
 	var tokens []Token
-	for _,v:=range reg.FindAllString(input,-1){
-		tokens=append(tokens,Token{Val:v,Type:getType(v)})
+	var isMultilineComment bool = false
+	for _, v := range reg.FindAllString(input, -1) {
+		if v[0] == '/' && v[1] == '/'{
+			continue
+		}
+		if v[0] == '/' && v[1] == '*' {
+			isMultilineComment = true
+			continue
+		} else if v[0] == '*' && v[1] == '/' {
+			isMultilineComment = false
+			continue
+		} else if isMultilineComment {
+			continue
+		}
+		tokens = append(tokens, Token{Val: v, Type: getType(v)})
 	}
-	lexer:=Lexer{tokens:tokens}
-	return &lexer,nil
+	lexer := Lexer{tokens: tokens}
+	return &lexer, nil
 }
-
-func (l *Lexer) GetAndGoNext ()Token {
+func (l *Lexer) GetAndGoNext() Token {
 	if l.cur >= len(l.tokens) {
 		return Token{Type: Error, Val: ""}
 	}
@@ -54,18 +67,18 @@ func (l *Lexer) GetAndGoNext ()Token {
 	return t
 }
 
-func (l *Lexer) Pick ()Token {
+func (l *Lexer) Pick() Token {
 	t := l.tokens[l.cur]
 	return t
 }
-func (l *Lexer) Increse () error {
+func (l *Lexer) Increse() error {
 	if l.cur+1 >= len(l.tokens) {
 		return errors.New("out of range")
 	}
 	l.cur++
 	return nil
 }
-func (l *Lexer) PickNext ()Token {
+func (l *Lexer) PickNext() Token {
 	if l.cur+1 >= len(l.tokens) {
 		return Token{Type: Error, Val: ""}
 	}
@@ -73,14 +86,13 @@ func (l *Lexer) PickNext ()Token {
 	return t
 }
 
-func (l *Lexer) PickPre ()Token {
+func (l *Lexer) PickPre() Token {
 	if l.cur-1 < 0 {
 		return Token{Type: Error, Val: ""}
 	}
 	t := l.tokens[l.cur-1]
 	return t
 }
-
 func getType(t string) TokenKind {
 	switch t {
 	case "{":
@@ -101,8 +113,10 @@ func getType(t string) TokenKind {
 		return QuestionMark
 	case ",":
 		return Comma
+	case "=":
+		return Assignment
 	default:
-		if (t[0] >= 'a' && t[0] <= 'z')||(t[0] >= 'A' && t[0] <= 'Z'){
+		if (t[0] >= 'a' && t[0] <= 'z') || (t[0] >= 'A' && t[0] <= 'Z') {
 			return Word
 		}
 		return Unknow

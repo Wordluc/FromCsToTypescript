@@ -72,13 +72,13 @@ func Parse(input string) (INode, error) {
 	if err != nil {
 		return nil, err
 	}
-  token:=l.PickNext()
+	token := l.PickNext()
 	if token.Val == classIdentifier {
 		return parseClass(l)
-	}else if token.Val == recordIdentifier {
+	} else if token.Val == recordIdentifier {
 		return parseRecord(l)
 	}
-	return nil,errors.New("identifier not managed")
+	return nil, errors.New("identifier not managed")
 }
 func parseRecord(l *Lexer.Lexer) (INode, error) {
 	class := Class{}
@@ -95,20 +95,20 @@ func parseRecord(l *Lexer.Lexer) (INode, error) {
 	if token.Type != Lexer.OpenCircle {
 		return class, errors.New("( not found")
 	}
-	token=l.Pick()
+	token = l.Pick()
 	parms := []FieldNode{}
-	for token.Type != Lexer.CloseCircle && token.Type != Lexer.CloseCurly && token.Type != Lexer.Semicolon{
-		parm,err:=parseParam(l)
-		if err!=nil{
-			return class,err
+	for token.Type != Lexer.CloseCircle && token.Type != Lexer.CloseCurly && token.Type != Lexer.Semicolon {
+		parm, err := parseParam(l)
+		if err != nil {
+			return class, err
 		}
-		parms = append(parms,parm)
+		parms = append(parms, parm)
 		l.Increse()
-    if l.Pick().Type == Lexer.OpenCurly {
+		if l.Pick().Type == Lexer.OpenCurly {
 			l.Increse()
 		}
 
-		token =l.Pick()
+		token = l.Pick()
 
 	}
 	class.Fields = parms

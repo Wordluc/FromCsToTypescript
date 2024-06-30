@@ -28,6 +28,28 @@ func parseParam(l *Lexer.Lexer) (FieldNode, error) {
 		return param, errors.New("param name not found")
 	}
 	param.Name = token.Val
+	token=l.Pick()
+	if token.Type!=Lexer.OpenCurly{
+		return param, nil
+	}
+	l.Increse()
+	token=l.Pick()
+	for token.Type!=Lexer.CloseCurly{
+		l.Increse()
+		token=l.Pick()
+	}
+	if l.PickNext().Type!=Lexer.Assignment{
+		return param, nil
+	}
+	l.Increse()
+	token=l.Pick()
+	if token.Type==Lexer.Semicolon{
+		return param, nil
+	}
+	for token.Type!=Lexer.Semicolon{
+		l.Increse()
+		token=l.Pick()
+	}
 	return param, nil
 }
 func parseType(l *Lexer.Lexer) (ITypeNode, error) {

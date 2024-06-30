@@ -32,7 +32,13 @@ func confrontTokens(t *testing.T, l *Lexer, expTokens []Token) {
 }
 
 func Test_TokenizingSimpleClass(t *testing.T) {
-	l, err := New("public class prova{public string test;}")
+	l, err := New(`public class prova{
+		//commento fcdfr
+		/*ciao 
+		questo
+		è un commento
+		*/
+		public string test;}`)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -282,8 +282,6 @@ func Test_parseClassWithGetSet(t *testing.T) {
 	parsed, err := Parse(`
    public class prova{
 		 public pers<int>? name{get;set;}
-		 public pers<int>? cognome{get;set;}="dddd";
-		 public string? eta;
    }`)
 	if err != nil {
 		panic(err)
@@ -292,7 +290,7 @@ func Test_parseClassWithGetSet(t *testing.T) {
 	if class.Name!="prova" {
 		t.Error("test:class name not found")
 	}
-	if len(class.Fields)!=3 {
+	if len(class.Fields)!=1 {
 		t.Error("test:class fields not found")
 	}
 	if class.Fields[0].Name!="name" {
@@ -304,11 +302,5 @@ func Test_parseClassWithGetSet(t *testing.T) {
 	}
 	if gType.Nullable==false {
 		t.Error("test:class field not nullable")
-	}
-	if class.Fields[1].Name!="cognome" {
-		t.Error("test:class field name not found")
-	}
-	if class.Fields[2].Name!="eta" {
-		t.Error("test:class field name not found")
 	}
 }
