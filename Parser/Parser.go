@@ -1,5 +1,5 @@
 package Parser
-
+//gestire gli extends,implements e tipi annidati(e.g:casa.finistra)
 import (
 	"GoFromCsToTypescript/Lexer"
 	"errors"
@@ -15,12 +15,10 @@ type Class struct {
 
 type FieldNode struct {
 	Name     string
-	Type     ITypeNode
+	Type     INode
 	Nullable bool
 }
 
-type ITypeNode interface {
-}
 
 type SimpleTypeNode struct {
 	Type Type
@@ -32,7 +30,7 @@ type CustomTypeNode struct {
 
 type GenericTypeNode struct { //parent<child1,child1>
 	ParentName string
-	ChildType  []ITypeNode
+	ChildType  []INode
 }
 
 type Type int8
@@ -56,7 +54,7 @@ func isVisibilitySetter(t string) bool {
 }
 func isBasicType(t string) Type {
 	switch t {
-	case "int":
+	case "int","float":
 		return Number
 	case "string":
 		return String
@@ -66,12 +64,20 @@ func isBasicType(t string) Type {
 		return Unknown
 	}
 }
-
-func Parse(input string) (Class, error) {
-	l, err := Lexer.New(input)
-	if err != nil {
-		return Class{}, err
+func ParseStr(str string) (Class, error) {
+	l, e := Lexer.New(str)
+	if e != nil {
+		return Class{}, e
 	}
+	token := l.PickNext()
+	if token.Val == classIdentifier {
+		return parseClass(l)
+	} else if token.Val == recordIdentifier {
+		return parseRecord(l)
+	}
+	return Class{}, errors.New("identifier not managed")
+}
+func Parse(l *Lexer.Lexer) (Class, error) {
 	token := l.PickNext()
 	if token.Val == classIdentifier {
 		return parseClass(l)

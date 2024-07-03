@@ -138,7 +138,7 @@ func Test_parseParamComposedGenericType(t *testing.T) {
 func Test_parseClass(t *testing.T) {
 	l, _ := Lexer.New(`
    public class prova{
-		 public string name;
+		 public string name;//ciao commento
    }`)
 	class, err := parseClass(l)
 	if err != nil {
@@ -186,7 +186,7 @@ func Test_parseClassWithNullable(t *testing.T) {
 	}
 }
 func Test_parseClassWithNullableGeneric(t *testing.T) {
-	parsed, err := Parse(`
+	parsed, err := ParseStr(`
    public class prova{
 		 public pers<int>? name;
    }`)
@@ -213,7 +213,7 @@ func Test_parseClassWithNullableGeneric(t *testing.T) {
 }
 
 func Test_parseRecord(t *testing.T) {
-	parsed, e := Parse("public record persona(string nome, string cognome,eta<int>? e);")
+	parsed, e := ParseStr("public record persona(string nome, string cognome,eta<int>? e);")
 
 	if e != nil {
 		panic(e)
@@ -252,7 +252,7 @@ func Test_parseRecord(t *testing.T) {
 	}
 }
 func Test_parseRecordMixed(t *testing.T) {
-	record, e := Parse("public record persona(string nome){string cognome};")
+	record, e := ParseStr("public record persona(string nome){string cognome};")
 
 	if e != nil {
 		panic(e)
@@ -279,7 +279,7 @@ func Test_parseRecordMixed(t *testing.T) {
 	}
 }
 func Test_parseClassWithGetSet(t *testing.T) {
-	class, err := Parse(`
+	class, err := ParseStr(`
    public class prova{
 		 public pers<int>? name{get;set;}
 		 public pers<int>? cognome{get;set;}="dddd";

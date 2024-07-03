@@ -52,7 +52,7 @@ func parseParam(l *Lexer.Lexer) (FieldNode, error) {
 	}
 	return param, nil
 }
-func parseType(l *Lexer.Lexer) (ITypeNode, error) {
+func parseType(l *Lexer.Lexer) (INode, error) {
 	token := l.Pick()
 	Ptype := isBasicType(token.Val)
 	if Ptype > 0 {
