@@ -311,3 +311,54 @@ func Test_parseClassWithGetSet(t *testing.T) {
 		t.Error("test:class field name not found")
 	}
 }
+
+func Test_parseClassWithCustomType(t *testing.T) {
+	class, err := ParseStr(`
+	  public class Person{
+			public Prova.persona p{get;set;}
+	  }
+`)
+	if err != nil {
+		panic(err)
+	}
+	if class.Name!="Person" {
+		t.Error("test:class name not found")
+	}
+	if len(class.Fields)!=1 {
+		t.Error("test:class fields not found")
+	}
+	if class.Fields[0].Name!="p" {
+		t.Error("test:class field name not found")
+	}
+	gType:=class.Fields[0]
+	if gType.Type.(CustomTypeNode).Type!="Prova.persona" {
+		t.Error("test:class field type ")
+	}
+}
+func Test_parseClassWithExtends(t *testing.T) {
+	class, err := ParseStr(`
+	public class Lavoratore:Persona{
+			public Prova.persona p{get;set;}
+	  }
+`)
+	if err != nil {
+		panic(err)
+	}
+	if class.Name!="Lavoratore" {
+		t.Error("test:class name not found")
+	}
+	if len(class.Fields)!=1 {
+		t.Error("test:class fields not found")
+	}
+	if class.Fields[0].Name!="p" {
+		t.Error("test:class field name not found")
+	}
+	gType:=class.Fields[0]
+	if gType.Type.(CustomTypeNode).Type!="Prova.persona" {
+		t.Error("test:class field type ")
+	}
+
+	if class.ExtendType[0].(CustomTypeNode).Type!="Persona" {
+		t.Error("test:class extends not found")
+	}
+}

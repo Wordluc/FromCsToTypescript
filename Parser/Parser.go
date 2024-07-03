@@ -1,5 +1,5 @@
 package Parser
-//gestire gli extends,implements e tipi annidati(e.g:casa.finistra)
+//gestire gli extends,implements
 import (
 	"GoFromCsToTypescript/Lexer"
 	"errors"
@@ -11,6 +11,7 @@ type INode interface {
 type Class struct {
 	Fields []FieldNode
 	Name   string
+	ExtendType []INode
 }
 
 type FieldNode struct {
@@ -131,7 +132,17 @@ func parseClass(l *Lexer.Lexer) (Class, error) {
 	if token.Type != Lexer.Word {
 		return class, errors.New("name not found")
 	}
+	
 	class.Name = token.Val
+	if l.Pick().Type == Lexer.Colons {
+		l.Increse()
+		extendType, err := parseType(l)
+		if err != nil {
+			return class, err
+		}
+		class.ExtendType = append(class.ExtendType, extendType)
+		l.Increse()
+	}
 	token = l.GetAndGoNext()
 	if token.Type != Lexer.OpenCurly {
 		return class, errors.New("{ not found")

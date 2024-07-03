@@ -57,7 +57,7 @@ func Test_TokenizingSimpleClass(t *testing.T) {
 }
 
 func Test_TokenizingClassWithGeneric(t *testing.T) {
-	l, err := New("public class prova{public pippo<cia,pippo> test;}")
+	l, err := New("public class prova{public pippo<wee.cia,pippo> test;}")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -69,6 +69,8 @@ func Test_TokenizingClassWithGeneric(t *testing.T) {
 		{Type: Word, Val: "public"},
 		{Type: Word, Val: "pippo"},
 		{Type: OpenAngle, Val: "<"},
+		{Type: Word, Val: "wee"},
+		{Type: Word, Val: "."},
 		{Type: Word, Val: "cia"},
 		{Type: Comma, Val: ","},
 		{Type: Word, Val: "pippo"},

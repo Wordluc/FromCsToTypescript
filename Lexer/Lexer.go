@@ -16,7 +16,7 @@ type Lexer struct {
 	cur    int
 }
 
-const regex = `\w+|[{|}]|[<|>]|[(|)]|;|\?|,|\=|[//]{2}.*|/\*|\*/`
+const regex = `\w+|[{|}]|[<|>]|[(|)]|;|\?|,|\.|\:|\=|[//]{2}.*|/\*|\*/`
 const (
 	Error  TokenKind = -2
 	Unknow TokenKind = -1
@@ -28,8 +28,10 @@ const (
 	CloseAngle
 	CloseCircle
 	Semicolon
+	Colons
 	QuestionMark
 	Comma
+	Dot
 	Assignment
 )
 
@@ -115,8 +117,12 @@ func getType(t string) TokenKind {
 		return Comma
 	case "=":
 		return Assignment
+	case ".":
+		return Dot
+	case ":":
+		return Colons
 	default:
-		if (t[0] >= 'a' && t[0] <= 'z') || (t[0] >= 'A' && t[0] <= 'Z') {
+		if (t[0] >= 'a' && t[0] <= 'z') || (t[0] >= 'A' && t[0] <= 'Z')||(t[0] >= '0' && t[0] <= '9') {
 			return Word
 		}
 		return Unknow
