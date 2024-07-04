@@ -49,12 +49,11 @@ func Test_WriteSimpleClassWithNullable(t *testing.T) {
 	  export interface Person {
 			name : string;			
 			age : number;
-			cognome : string?;
+			cognome : string | null;
 		}`
 	if err != nil {
 		panic(err)
 	}
-
 	if !IsEqual(str, exp) {
 		t.Error("test:write simple with nullable class not found")
 	}
@@ -68,7 +67,7 @@ func Test_WriteClassWithGeneric(t *testing.T) {
 		`)
 	exp := `
 	  export interface Person {
-			name : Array<Array<prova>,number>?;
+			name : Array<Array<prova>,number> | null;
 		}`
 	if err != nil {
 		panic(err)
@@ -108,7 +107,6 @@ func Test_WriteClassWithExtends(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	println(str)
 	if !IsEqual(str, exp) {
 		t.Error("test:write simple with nullable class not found")
 	}
@@ -137,9 +135,8 @@ func Test_WriteClass1(t *testing.T) {
    public int TelematicSource      { get; init; }
    public string? TakerUser        { get; init; }
    public DateTime? TakerDate      { get; init; }
-	public string? QuittanceUser    { get; init; }
+	 public string? QuittanceUser    { get; init; }
    public DateTime? QuittanceDate  { get; init; }
-
 }		`)
 	if err != nil {
 		panic(err)

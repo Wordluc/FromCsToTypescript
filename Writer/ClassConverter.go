@@ -37,7 +37,7 @@ func ConvertClass(node Parser.INode) (string, error) {
 		}
 		str.WriteString(strType)
 		if field.Nullable {
-			str.WriteString("?")
+			str.WriteString(" | null")
 		}
 		str.WriteString(";\n")
 	}

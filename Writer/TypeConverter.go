@@ -26,6 +26,8 @@ func ConvertSimpleType(node Parser.INode) (string, error) {
 		return "string", nil
 	case Parser.Boolean:
 		return "boolean", nil
+	case Parser.Date:
+		return "Date",nil
 	}
 	return "", errors.New("not a simple type")
 }

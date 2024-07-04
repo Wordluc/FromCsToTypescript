@@ -1,4 +1,5 @@
 package Parser
+
 //gestire gli extends,implements
 import (
 	"GoFromCsToTypescript/Lexer"
@@ -9,8 +10,8 @@ type INode interface {
 }
 
 type Class struct {
-	Fields []FieldNode
-	Name   string
+	Fields     []FieldNode
+	Name       string
 	ExtendType []INode
 }
 
@@ -19,7 +20,6 @@ type FieldNode struct {
 	Type     INode
 	Nullable bool
 }
-
 
 type SimpleTypeNode struct {
 	Type Type
@@ -40,6 +40,7 @@ const (
 	Unknown Type = iota
 	Number  Type = iota
 	String
+	Date
 	Boolean
 )
 const classIdentifier = "class"
@@ -55,12 +56,14 @@ func isVisibilitySetter(t string) bool {
 }
 func isBasicType(t string) Type {
 	switch t {
-	case "int","float":
+	case "int", "float", "short":
 		return Number
 	case "string":
 		return String
 	case "bool":
 		return Boolean
+	case "DateTime":
+		return Date
 	default:
 		return Unknown
 	}
@@ -132,7 +135,7 @@ func parseClass(l *Lexer.Lexer) (Class, error) {
 	if token.Type != Lexer.Word {
 		return class, errors.New("name not found")
 	}
-	
+
 	class.Name = token.Val
 	if l.Pick().Type == Lexer.Colons {
 		l.Increse()
