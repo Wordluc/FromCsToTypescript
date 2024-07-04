@@ -27,7 +27,7 @@ func main() {
 	port := os.Args[1]
 	server, _ := net.ListenPacket("udp", "127.0.0.1:"+port)
 	defer server.Close()
-	str := make([]byte, 1000)
+	str := make([]byte, 10000)
 	resp := Response{}
 	n, addr, e := server.ReadFrom(str)
 	if e != nil {

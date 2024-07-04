@@ -108,8 +108,40 @@ func Test_WriteClassWithExtends(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-   println(str)
+	println(str)
 	if !IsEqual(str, exp) {
 		t.Error("test:write simple with nullable class not found")
+	}
+}
+func Test_WriteClass1(t *testing.T) {
+	_, err := Convert(`
+	public class TelematicInfo
+{
+   public short? AnnoModello       { get; init; }
+   public bool Accolta             { get; init; }
+   public bool? Scartata           { get; init; }
+   public bool AccoltaParzialmente { get; init; }
+   public string AdEProtocol       { get; init; }
+   public bool FlagISA             { get; init; }
+   public bool FlagConferma        { get; init; }
+   public int CounterIVP           { get; init; }
+   public Byte DocumentType        { get; init; }
+   public bool ManuallySent        { get; init; }
+   public DateTime? SentDate       { get; init; }
+   public int? IdCustomer          { get; init; }
+   public int? IdWfInstanceKey     { get; init; }
+   public string State             { get; init; }
+   public short YearRelease        { get; init; }
+   public string SupplyCode        { get; init; }
+   public string ModelCode         { get; init; }
+   public int TelematicSource      { get; init; }
+   public string? TakerUser        { get; init; }
+   public DateTime? TakerDate      { get; init; }
+	public string? QuittanceUser    { get; init; }
+   public DateTime? QuittanceDate  { get; init; }
+
+}		`)
+	if err != nil {
+		panic(err)
 	}
 }
