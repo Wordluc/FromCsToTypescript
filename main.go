@@ -16,29 +16,35 @@ type Status struct {
 	Code int
 	Msg  string
 }
-func mappingErrorResponse(e error)Response{
-	   var status=Status{Code:500,Msg:e.Error()}
-		 return Response{Status:status}
+
+func sendErrorResponse(e error, server net.PacketConn, addr net.Addr) {
+	status := Status{Code: 500, Msg: e.Error()}
+	resp := Response{Status: status}
+	strResp, _ := json.Marshal(resp)
+	server.WriteTo(strResp, addr)
 }
 func main() {
 	port := os.Args[1]
 	server, _ := net.ListenPacket("udp", "127.0.0.1:"+port)
 	defer server.Close()
 	str := make([]byte, 1000)
-	resp:=Response{}
+	resp := Response{}
 	n, addr, e := server.ReadFrom(str)
 	if e != nil {
-    resp=mappingErrorResponse(e)
+		sendErrorResponse(e, server, addr)
+		return ;
 	}
 	if n == 0 {
-    resp=mappingErrorResponse(errors.New("none code to convert"))
+		sendErrorResponse(errors.New("no code to convert"), server, addr)
+		return ;
 	}
 	strConverted, e := Writer.Convert(string(str))
 	if e != nil {
-    resp=mappingErrorResponse(e)
+		sendErrorResponse(e, server, addr)
+		return ;
 	}
-	resp.Body=string(strConverted)
-	resp.Status.Code=200
-  strResp,_:=json.Marshal(resp)
-	server.WriteTo(strResp,addr)
+	resp.Body = string(strConverted)
+	resp.Status.Code = 200
+	strResp, _ := json.Marshal(resp)
+	server.WriteTo(strResp, addr)
 }
