@@ -84,7 +84,7 @@ func Test_WriteClassWithCustomType(t *testing.T) {
 		`)
 	exp := `
 	  export interface Person {
-			p : Array<Prova.persona>;
+			p : Array<persona>;
 		}`
 	if err != nil {
 		panic(err)
@@ -102,7 +102,7 @@ func Test_WriteClassWithExtends(t *testing.T) {
 		`)
 	exp := `
 		export interface Lavoratore extends Person {
-				lavori : Array<Lavoro.tipo>;
+				lavori : Array<tipo>;
 		}`
 	if err != nil {
 		panic(err)

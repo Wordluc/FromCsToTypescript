@@ -331,7 +331,7 @@ func Test_parseClassWithCustomType(t *testing.T) {
 		t.Error("test:class field name not found")
 	}
 	gType:=class.Fields[0]
-	if gType.Type.(CustomTypeNode).Type!="Prova.persona" {
+	if gType.Type.(CustomTypeNode).Type!="persona" {
 		t.Error("test:class field type ")
 	}
 }
@@ -354,7 +354,8 @@ func Test_parseClassWithExtends(t *testing.T) {
 		t.Error("test:class field name not found")
 	}
 	gType:=class.Fields[0]
-	if gType.Type.(CustomTypeNode).Type!="Prova.persona" {
+	println(gType.Type.(CustomTypeNode).Type)
+	if gType.Type.(CustomTypeNode).Type!="persona" {
 		t.Error("test:class field type ")
 	}
 
