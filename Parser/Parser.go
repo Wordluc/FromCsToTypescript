@@ -4,6 +4,7 @@ package Parser
 import (
 	"GoFromCsToTypescript/Lexer"
 	"errors"
+	"regexp"
 )
 
 type INode interface {
@@ -55,8 +56,11 @@ func isVisibilitySetter(t string) bool {
 	}
 }
 func isBasicType(t string) Type {
+	if isNumber,_:=regexp.Match(`[i|I]nt\d*|[f|F]loat\d*`,[]byte(t));isNumber{
+		return Number
+	}
 	switch t {
-	case "int", "float", "short":
+	case  "short":
 		return Number
 	case "string":
 		return String

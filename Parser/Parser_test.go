@@ -88,7 +88,7 @@ func Test_parseParamGenericType(t *testing.T) {
 }
 
 func Test_parseParamComplexGenericType(t *testing.T) {
-	l, _ := Lexer.New("public prova<int,string> name;")
+	l, _ := Lexer.New("public prova<Int64,string> name;")
 
 	node, err := parseParam(l)
 	if err != nil {
