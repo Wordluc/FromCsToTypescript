@@ -73,8 +73,10 @@ func ParseStr(str string) (Class, error) {
 	if e != nil {
 		return Class{}, e
 	}
+	return Parse(l)
+}
+func Parse(l *Lexer.Lexer) (Class, error) {
 	token := l.Pick()
-
 	if token.Val == classIdentifier {
 		return parseClass(l)
 	} else if token.Val == recordIdentifier {
@@ -82,15 +84,6 @@ func ParseStr(str string) (Class, error) {
 	}
 
 	token = l.PickNext()
-	if token.Val == classIdentifier {
-		return parseClass(l)
-	} else if token.Val == recordIdentifier {
-		return parseRecord(l)
-	}
-	return Class{}, errors.New("identifier not managed")
-}
-func Parse(l *Lexer.Lexer) (Class, error) {
-	token := l.PickNext()
 	if token.Val == classIdentifier {
 		return parseClass(l)
 	} else if token.Val == recordIdentifier {

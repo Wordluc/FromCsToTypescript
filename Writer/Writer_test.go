@@ -19,7 +19,7 @@ func IsEqual(a, b string) bool {
 func Test_WriteSimpleClass(t *testing.T) {
 
 	str, err := Convert(`
-	  public class Person{
+	  class Person{
 			public string name;
 			public int age;
 	  }
