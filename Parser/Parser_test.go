@@ -188,7 +188,7 @@ func Test_parseClassWithNullable(t *testing.T) {
 func Test_parseClassWithNullableGeneric(t *testing.T) {
 	parsed, err := ParseStr(`
    public class prova{
-		 public pers<int>? name;
+		 public pers<Byte>? name;
    }`)
 	if err != nil {
 		panic(err)
