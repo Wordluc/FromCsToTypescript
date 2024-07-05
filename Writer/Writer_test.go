@@ -49,7 +49,7 @@ func Test_WriteSimpleClassWithNullable(t *testing.T) {
 	  export interface Person {
 			name : string;			
 			age : number;
-			cognome : string | null;
+			cognome? : string;
 		}`
 	if err != nil {
 		panic(err)
@@ -67,7 +67,7 @@ func Test_WriteClassWithGeneric(t *testing.T) {
 		`)
 	exp := `
 	  export interface Person {
-			name : Array<Array<prova>,number> | null;
+			name? : Array<Array<prova>,number>;
 		}`
 	if err != nil {
 		panic(err)
