@@ -73,7 +73,15 @@ func ParseStr(str string) (Class, error) {
 	if e != nil {
 		return Class{}, e
 	}
-	token := l.PickNext()
+	token := l.Pick()
+
+	if token.Val == classIdentifier {
+		return parseClass(l)
+	} else if token.Val == recordIdentifier {
+		return parseRecord(l)
+	}
+
+	token = l.PickNext()
 	if token.Val == classIdentifier {
 		return parseClass(l)
 	} else if token.Val == recordIdentifier {
@@ -92,14 +100,16 @@ func Parse(l *Lexer.Lexer) (Class, error) {
 }
 func parseRecord(l *Lexer.Lexer) (Class, error) {
 	class := Class{}
-	token := l.GetAndGoNext()
+	token := l.Pick()
 	if isVisibilitySetter(token.Val) {
+		l.Increse()
 	}
 	l.Increse()
-	token = l.GetAndGoNext()
+	token = l.Pick()
 	if token.Type != Lexer.Word {
 		return class, errors.New("name not found")
 	}
+	l.Increse()
 	class.Name = token.Val
 	token = l.GetAndGoNext()
 	if token.Type != Lexer.OpenCircle {
@@ -127,15 +137,16 @@ func parseRecord(l *Lexer.Lexer) (Class, error) {
 }
 func parseClass(l *Lexer.Lexer) (Class, error) {
 	class := Class{}
-	token := l.GetAndGoNext()
+	token := l.Pick()
 	if isVisibilitySetter(token.Val) {
+		l.Increse()
 	}
 	l.Increse()
-	token = l.GetAndGoNext()
+	token = l.Pick()
 	if token.Type != Lexer.Word {
 		return class, errors.New("name not found")
 	}
-
+  l.Increse()
 	class.Name = token.Val
 	if l.Pick().Type == Lexer.Colons {
 		l.Increse()

@@ -213,7 +213,7 @@ func Test_parseClassWithNullableGeneric(t *testing.T) {
 }
 
 func Test_parseRecord(t *testing.T) {
-	parsed, e := ParseStr("public record persona(string nome, string cognome,eta<int>? e);")
+	parsed, e := ParseStr("record persona(string nome, string cognome,eta<int>? e);")
 
 	if e != nil {
 		panic(e)
@@ -337,7 +337,7 @@ func Test_parseClassWithCustomType(t *testing.T) {
 }
 func Test_parseClassWithExtends(t *testing.T) {
 	class, err := ParseStr(`
-	public class Lavoratore:Persona{
+	class Lavoratore:Persona{
 			public Prova.persona p{get;set;}
 	  }
 `)
