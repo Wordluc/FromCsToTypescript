@@ -9,7 +9,7 @@ func main() {
 	In:=os.Stdin
 	Out:=os.Stdout
 	Err:=os.Stderr
-	str:=make([]byte,1024)
+	str:=make([]byte,5000)
 	In.Read(str)
 	converted, err := Writer.Convert(string(str))
 	if err != nil {

@@ -26,7 +26,11 @@ func ConvertClass(node Parser.INode) (string, error) {
 	var e error
 	var f IConvert
 	for _, field := range class.Fields {
-		str.WriteString(field.Name + " : ")
+		if field.Nullable {
+			str.WriteString(field.Name + "? : ")
+		}else{
+			str.WriteString(field.Name + " : ")
+		}
 		f, e = getConvertType(field.Type)
 		if e != nil {
 			return "", errors.New("Converter-Error:" + e.Error())
@@ -36,9 +40,6 @@ func ConvertClass(node Parser.INode) (string, error) {
 			return "", errors.New("Converter-Error:" + e.Error())
 		}
 		str.WriteString(strType)
-		if field.Nullable {
-			str.WriteString(" | null")
-		}
 		str.WriteString(";\n")
 	}
 	str.WriteString("}")

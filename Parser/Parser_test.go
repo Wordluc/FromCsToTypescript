@@ -88,7 +88,7 @@ func Test_parseParamGenericType(t *testing.T) {
 }
 
 func Test_parseParamComplexGenericType(t *testing.T) {
-	l, _ := Lexer.New("public prova<int,string> name;")
+	l, _ := Lexer.New("public prova<Int64,string> name;")
 
 	node, err := parseParam(l)
 	if err != nil {
@@ -188,7 +188,7 @@ func Test_parseClassWithNullable(t *testing.T) {
 func Test_parseClassWithNullableGeneric(t *testing.T) {
 	parsed, err := ParseStr(`
    public class prova{
-		 public pers<int>? name;
+		 public pers<Byte>? name;
    }`)
 	if err != nil {
 		panic(err)
@@ -331,7 +331,7 @@ func Test_parseClassWithCustomType(t *testing.T) {
 		t.Error("test:class field name not found")
 	}
 	gType:=class.Fields[0]
-	if gType.Type.(CustomTypeNode).Type!="Prova.persona" {
+	if gType.Type.(CustomTypeNode).Type!="persona" {
 		t.Error("test:class field type ")
 	}
 }
@@ -354,7 +354,8 @@ func Test_parseClassWithExtends(t *testing.T) {
 		t.Error("test:class field name not found")
 	}
 	gType:=class.Fields[0]
-	if gType.Type.(CustomTypeNode).Type!="Prova.persona" {
+	println(gType.Type.(CustomTypeNode).Type)
+	if gType.Type.(CustomTypeNode).Type!="persona" {
 		t.Error("test:class field type ")
 	}
 

@@ -65,14 +65,11 @@ func parseType(l *Lexer.Lexer) (INode, error) {
 			}
 			return gType, nil
 		}
-		tokenStr := token.Val
 		for l.PickNext().Type == Lexer.Dot {
 			l.Increse()
 			l.Increse()
-			token=l.Pick()
-			tokenStr += "."+token.Val
 		}
-		return CustomTypeNode{Type: tokenStr}, nil
+		return CustomTypeNode{Type: l.Pick().Val}, nil
 	}
 }
 func parseGenericType(l *Lexer.Lexer) (GenericTypeNode, error) {
