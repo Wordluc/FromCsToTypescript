@@ -60,7 +60,7 @@ func isBasicType(t string) Type {
 		return Number
 	}
 	switch t {
-	case  "short","Byte":
+	case  "short","Byte","byte":
 		return Number
 	case "string":
 		return String
