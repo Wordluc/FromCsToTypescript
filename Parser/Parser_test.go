@@ -193,7 +193,7 @@ func Test_parseClassWithNullableGeneric(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	class:= parsed	
+	class:= parsed[0]	
 	if class.Name!="prova" {
 		t.Error("test:class name not found")
 	}
@@ -218,7 +218,7 @@ func Test_parseRecord(t *testing.T) {
 	if e != nil {
 		panic(e)
 	}
-	record:=parsed
+	record:=parsed[0]
 
 	if record.Name!="persona" {
 		t.Error("test:class name not found")
@@ -252,13 +252,13 @@ func Test_parseRecord(t *testing.T) {
 	}
 }
 func Test_parseRecordMixed(t *testing.T) {
-	record, e := ParseStr("public record persona(string nome){string cognome};")
+	records, e := ParseStr("public record persona(string nome){string cognome};")
 
 	if e != nil {
 		panic(e)
 	}
 
-
+	record:=records[0]
 	if record.Name!="persona" {
 		t.Error("test:class name not found")
 	}
@@ -279,15 +279,17 @@ func Test_parseRecordMixed(t *testing.T) {
 	}
 }
 func Test_parseClassWithGetSet(t *testing.T) {
-	class, err := ParseStr(`
+	classes, err := ParseStr(`
    public class prova{
 		 public pers<int>? name{get;set;}
 		 public pers<int>? cognome{get;set;}="dddd";
 		 public string? eta;
    }`)
+
 	if err != nil {
 		panic(err)
 	}
+	class:= classes[0]
 	if class.Name!="prova" {
 		t.Error("test:class name not found")
 	}
@@ -313,7 +315,7 @@ func Test_parseClassWithGetSet(t *testing.T) {
 }
 
 func Test_parseClassWithCustomType(t *testing.T) {
-	class, err := ParseStr(`
+	classes, err := ParseStr(`
 	  public class Person{
 			public Prova.persona p{get;set;}
 	  }
@@ -321,6 +323,8 @@ func Test_parseClassWithCustomType(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
+
+	class:= classes[0]
 	if class.Name!="Person" {
 		t.Error("test:class name not found")
 	}
@@ -336,7 +340,7 @@ func Test_parseClassWithCustomType(t *testing.T) {
 	}
 }
 func Test_parseClassWithExtends(t *testing.T) {
-	class, err := ParseStr(`
+	classes, err := ParseStr(`
 	class Lavoratore:Persona{
 			public Prova.persona p{get;set;}
 	  }
@@ -344,6 +348,8 @@ func Test_parseClassWithExtends(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
+
+	class:= classes[0]
 	if class.Name!="Lavoratore" {
 		t.Error("test:class name not found")
 	}
@@ -364,7 +370,7 @@ func Test_parseClassWithExtends(t *testing.T) {
 	}
 }
 func Test_parseRecordWithExtends(t *testing.T) {
-	class, err := ParseStr(`
+	classes, err := ParseStr(`
 	record Lavoratore(Prova.persona p):Persona{
 		public int eta;
 	  }
@@ -372,6 +378,8 @@ func Test_parseRecordWithExtends(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
+
+	class:= classes[0]
 	if class.Name!="Lavoratore" {
 		t.Error("test:class name not found")
 	}
@@ -394,7 +402,7 @@ func Test_parseRecordWithExtends(t *testing.T) {
 	}
 }
 func Test_parseRecord2(t *testing.T) {
-	class, err := ParseStr(`
+	classes, err := ParseStr(`
 	record Lavoratore:Persona{
 		public int eta;
 	  }
@@ -402,6 +410,8 @@ func Test_parseRecord2(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
+
+	class:= classes[0]
 	if class.Name!="Lavoratore" {
 		t.Error("test:class name not found")
 	}

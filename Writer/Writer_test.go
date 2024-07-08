@@ -142,3 +142,57 @@ func Test_WriteClass1(t *testing.T) {
 		panic(err)
 	}
 }
+func Test_WriteTwoSimpleClass(t *testing.T) {
+
+	str, err := Convert(`
+	  class Person1{
+			public string name1;
+			public int age1;
+	  }
+	  record Person2{
+			public string name2;
+			public int age2;
+	  }`)
+	exp := `
+	  export interface Person1 {
+		  name1 : string;
+		  age1 : number;
+    }
+		export interface Person2 {
+		  name2 : string;
+		  age2 : number;
+    }`
+	if err != nil {
+		panic(err)
+	}
+	println(str)
+	if !IsEqual(str, exp) {
+		t.Error("test:write simple class not found")
+	}
+}
+func Test_WriteTwoSimpleClass2(t *testing.T) {
+
+	str, err := Convert(`
+	  record Person1{
+			public persona.persona p;
+			public int age1;
+	  }
+	  record Person2{
+			public int age2;
+	  }`)
+	exp := `
+	  export interface Person1 {
+		  p : persona;
+		  age1 : number;
+    }
+		export interface Person2 {
+		  age2 : number;
+    }`
+	if err != nil {
+		panic(err)
+	}
+	println(str)
+	if !IsEqual(str, exp) {
+		t.Error("test:write simple class not found")
+	}
+}

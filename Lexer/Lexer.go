@@ -16,7 +16,7 @@ type Lexer struct {
 	cur    int
 }
 
-const regex = `\w+|[{|}]|[<|>]|[(|)]|;|\?|,|\.|\:|\=|[//]{2}.*|/\*|\*/`
+const regex = `[{|}]|[<|>]|[(|)]|;|\?|,|\.|\:|\=|[\/\/]{2}.*|\/\*|\*\/|\w+`
 const (
 	Error  TokenKind = -2
 	Unknow TokenKind = -1
@@ -33,6 +33,7 @@ const (
 	Comma
 	Dot
 	Assignment
+	EOF
 )
 
 func New(input string) (*Lexer, error) {
@@ -57,12 +58,13 @@ func New(input string) (*Lexer, error) {
 		}
 		tokens = append(tokens, Token{Val: v, Type: getType(v)})
 	}
+	tokens = append(tokens, Token{Type: EOF, Val: ""})
 	lexer := Lexer{tokens: tokens}
 	return &lexer, nil
 }
 func (l *Lexer) GetAndGoNext() Token {
 	if l.cur >= len(l.tokens) {
-		return Token{Type: Error, Val: ""}
+		return Token{Type: EOF, Val: ""}
 	}
 	t := l.tokens[l.cur]
 	l.cur++
@@ -70,6 +72,9 @@ func (l *Lexer) GetAndGoNext() Token {
 }
 
 func (l *Lexer) Pick() Token {
+	if l.cur >= len(l.tokens) {
+		return Token{Type: EOF, Val: ""}
+	}
 	t := l.tokens[l.cur]
 	return t
 }
@@ -82,7 +87,7 @@ func (l *Lexer) Increse() error {
 }
 func (l *Lexer) PickNext() Token {
 	if l.cur+1 >= len(l.tokens) {
-		return Token{Type: Error, Val: ""}
+		return Token{Type: EOF, Val: ""}
 	}
 	t := l.tokens[l.cur+1]
 	return t

@@ -5,15 +5,10 @@ import (
 	"errors"
 	"strings"
 )
-
-func ConvertClass(node Parser.INode) (string, error) {
-	class, ok := node.(Parser.Class)
-	if !ok {
-		return "", errors.New("not a class")
-	}
+func ConvertClass(class Parser.Class) (string, error) {
 	var str strings.Builder
 	str.WriteString("export interface ")
-	if class.ExtendType != nil {
+	if len(class.ExtendType) != 0 {
 		strs, e := ConverExtends(class.ExtendType)
 		if e != nil {
 			return "", errors.New("Converter-Error:" + e.Error())

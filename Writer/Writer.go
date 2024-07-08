@@ -4,6 +4,7 @@ import (
 	"GoFromCsToTypescript/Lexer"
 	"GoFromCsToTypescript/Parser"
 	"errors"
+	"strings"
 )
 
 func Convert(str string) (string, error) {
@@ -15,7 +16,15 @@ func Convert(str string) (string, error) {
 	if e != nil {
 		return "",errors.New("Parser-Error:"+ e.Error())
 	}
-	return ConvertClass(node)
+	var strs strings.Builder
+	for _,class:=range node{
+		str, e = ConvertClass(class)
+		if e != nil {
+			return "",errors.New("Converter-Error:"+ e.Error())
+		}
+    strs.WriteString(str+"\n")
+	}
+	return strs.String(), nil
 }
 
 type IConvert func (Parser.INode) (string, error)
