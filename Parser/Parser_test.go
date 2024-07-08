@@ -363,3 +363,57 @@ func Test_parseClassWithExtends(t *testing.T) {
 		t.Error("test:class extends not found")
 	}
 }
+func Test_parseRecordWithExtends(t *testing.T) {
+	class, err := ParseStr(`
+	record Lavoratore(Prova.persona p):Persona{
+		public int eta;
+	  }
+`)
+	if err != nil {
+		panic(err)
+	}
+	if class.Name!="Lavoratore" {
+		t.Error("test:class name not found")
+	}
+	if len(class.Fields)!=2 {
+		t.Error("test:class fields not found")
+	}
+	if class.Fields[0].Name!="p" {
+		t.Error("test:class field name not found")
+	}
+	if class.Fields[1].Name!="eta" {
+		t.Error("test:class field name not found")
+	}
+	gType:=class.Fields[0]
+	if gType.Type.(CustomTypeNode).Type!="persona" {
+		t.Error("test:class field type ")
+	}
+
+	if class.ExtendType[0].(CustomTypeNode).Type!="Persona" {
+		t.Error("test:class extends not found")
+	}
+}
+func Test_parseRecord2(t *testing.T) {
+	class, err := ParseStr(`
+	record Lavoratore:Persona{
+		public int eta;
+	  }
+`)
+	if err != nil {
+		panic(err)
+	}
+	if class.Name!="Lavoratore" {
+		t.Error("test:class name not found")
+	}
+	if len(class.Fields)!=1 {
+		t.Error("test:class fields not found")
+	}
+	if class.Fields[0].Name!="eta" {
+		t.Error("test:class field name not found")
+	}
+	gType:=class.Fields[0]
+	if gType.Type.(SimpleTypeNode).Type!=Number {
+		t.Error("test:class field type ")
+	}
+
+}

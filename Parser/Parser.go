@@ -56,11 +56,11 @@ func isVisibilitySetter(t string) bool {
 	}
 }
 func isBasicType(t string) Type {
-	if isNumber,_:=regexp.Match(`[i|I]nt\d*|[f|F]loat\d*`,[]byte(t));isNumber{
+	if isNumber, _ := regexp.Match(`[i|I]nt\d*|[f|F]loat\d*`, []byte(t)); isNumber {
 		return Number
 	}
 	switch t {
-	case  "short","Byte","byte":
+	case "short", "Byte", "byte":
 		return Number
 	case "string":
 		return String
@@ -110,7 +110,8 @@ func parseRecord(l *Lexer.Lexer) (Class, error) {
 	class.Name = token.Val
 	token = l.GetAndGoNext()
 	if token.Type != Lexer.OpenCircle {
-		return class, errors.New("( not found")
+		l.Increse()
+		l.Increse()
 	}
 	token = l.Pick()
 	parms := []FieldNode{}
@@ -121,11 +122,19 @@ func parseRecord(l *Lexer.Lexer) (Class, error) {
 		}
 		parms = append(parms, parm)
 		l.Increse()
+		token = l.Pick()
+		if token.Type == Lexer.Colons {
+			l.Increse()
+			extendType, err := parseType(l)
+			l.Increse()
+			if err != nil {
+				return class, err
+			}
+			class.ExtendType = append(class.ExtendType, extendType)
+		}
 		if l.Pick().Type == Lexer.OpenCurly {
 			l.Increse()
 		}
-
-		token = l.Pick()
 
 	}
 	class.Fields = parms
@@ -143,7 +152,7 @@ func parseClass(l *Lexer.Lexer) (Class, error) {
 	if token.Type != Lexer.Word {
 		return class, errors.New("name not found")
 	}
-  l.Increse()
+	l.Increse()
 	class.Name = token.Val
 	if l.Pick().Type == Lexer.Colons {
 		l.Increse()
