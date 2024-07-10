@@ -61,7 +61,7 @@ func Test_WriteSimpleClassWithNullable(t *testing.T) {
 
 func Test_WriteClassWithGeneric(t *testing.T) {
 	str, err := Convert(`
-	  public class Person{
+	  record Person{
 			public IEnumerable<List<prova>,float>? name{get;set;}
 	  }
 		`)
