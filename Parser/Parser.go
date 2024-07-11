@@ -85,28 +85,12 @@ func Parse(l *Lexer.Lexer) ([]Class, error) {
 		class := Class{}
 		var err error
 		token := l.Pick()
-		if token.Val == classIdentifier {
-			class, err = parseClass(l)
+    class, err = parse(token,l)
+		if err != nil {
+			token = l.PickNext()
+			class, err = parse(token,l)
 			if err != nil {
-				return classes, err
-			}
-		} else if token.Val == recordIdentifier {
-			class, err = parseRecord(l)
-			if err != nil {
-				return classes, err
-			}
-		}
-
-		token = l.PickNext()
-		if token.Val == classIdentifier {
-			class, err = parseClass(l)
-			if err != nil {
-				return classes, err
-			}
-		} else if token.Val == recordIdentifier {
-			class, err = parseRecord(l)
-			if err != nil {
-				return classes, err
+				return []Class{}, err
 			}
 		}
 		classes = append(classes, class)
@@ -116,6 +100,17 @@ func Parse(l *Lexer.Lexer) ([]Class, error) {
 		}
 	}
 }
+
+func parse(token Lexer.Token,l *Lexer.Lexer) (Class, error) {
+	
+		if token.Val == classIdentifier {
+			return parseClass(l)
+		} else if token.Val == recordIdentifier {
+			return parseRecord(l)
+		}
+		return Class{}, errors.New("class not found")
+}
+
 func parseRecord(l *Lexer.Lexer) (Class, error) {
 	class := Class{}
 	token := l.Pick()

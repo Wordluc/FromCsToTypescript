@@ -427,3 +427,20 @@ func Test_parseRecord2(t *testing.T) {
 	}
 
 }
+func Test_parseErrorLoop(t *testing.T) {
+	_, err := ParseStr(`
+		export interface provaLoop{
+			/** Tipologia di operazione. True = Valida, False = Annulla validazione */
+			oooo?: boolean;
+			ff?: number;
+			MessageForWorkflow?: string;
+			/** Tipo di modello */
+			ddd: string;
+			/** Data invio manuale*/
+			bbb?: Date;
+			Protocol?: string;
+		}`)
+	if err == nil {
+		t.Error("test:error not found")
+	}
+}
