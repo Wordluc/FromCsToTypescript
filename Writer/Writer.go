@@ -22,7 +22,7 @@ func Convert(str string) (string, error) {
 		if e != nil {
 			return "",errors.New("Converter-Error:"+ e.Error())
 		}
-    strs.WriteString(str+"\n")
+    strs.WriteString(str+"\n\n")
 	}
 	return strs.String(), nil
 }
