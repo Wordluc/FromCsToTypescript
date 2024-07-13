@@ -145,10 +145,10 @@ func Test_WriteClass1(t *testing.T) {
 func Test_WriteTwoSimpleClass(t *testing.T) {
 
 	str, err := Convert(`
-	  class Person1{
-			public string name1;
-			public int age1;
-	  }
+	  record Person1(
+			string name1,
+			int age1
+	  };
 	  record Person2{
 			public string name2;
 			public int age2;

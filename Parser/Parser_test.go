@@ -427,3 +427,27 @@ func Test_parseRecord2(t *testing.T) {
 	}
 
 }
+
+func Test_parseRecordWithDefault(t *testing.T) {
+	classes, err := ParseStr(`
+	record Lavoratore(int eta="90",string name="frang");`)
+	if err != nil {
+		panic(err)
+	}
+
+	class:= classes[0]
+	if class.Name!="Lavoratore" {
+		t.Error("test:class name not found")
+	}
+	if len(class.Fields)!=2 {
+		t.Error("test:class fields not found")
+	}
+	if class.Fields[0].Name!="eta" {
+		t.Error("test:class field name not found")
+	}
+	gType:=class.Fields[0]
+	if gType.Type.(SimpleTypeNode).Type!=Number {
+		t.Error("test:class field type ")
+	}
+
+}

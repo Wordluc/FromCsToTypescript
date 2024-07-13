@@ -19,7 +19,7 @@ func parseParam(l *Lexer.Lexer) (FieldNode, error) {
 	param.Type = Ptype
 	l.Increse()
 	token = l.GetAndGoNext()
-	if token.Type==Lexer.QuestionMark {
+	if token.Type == Lexer.QuestionMark {
 		param.Nullable = true
 		token = l.Pick()
 		l.Increse()
@@ -28,28 +28,11 @@ func parseParam(l *Lexer.Lexer) (FieldNode, error) {
 		return param, errors.New("param name not found")
 	}
 	param.Name = token.Val
-	token=l.Pick()
-	if token.Type!=Lexer.OpenCurly{
-		return param, nil
-	}
-	l.Increse()
-	token=l.Pick()
-	for token.Type!=Lexer.CloseCurly{
-		l.Increse()
-		token=l.Pick()
-	}
-	if l.PickNext().Type!=Lexer.Assignment{
-		return param, nil
-	}
-	l.Increse()
-	token=l.Pick()
-	if token.Type==Lexer.Semicolon{
-		return param, nil
-	}
-	for token.Type!=Lexer.Semicolon{
-		l.Increse()
-		token=l.Pick()
-	}
+	println("name"+param.Name)
+	println("first"+ l.Pick().Val)
+	jumpSetGetter(l)
+	jumpUntilNextField(l)
+	println("after"+l.Pick().Val)
 	return param, nil
 }
 func parseType(l *Lexer.Lexer) (INode, error) {
@@ -107,4 +90,26 @@ func parseGenericType(l *Lexer.Lexer) (GenericTypeNode, error) {
 		}
 	}
 	return gType, nil
+}
+
+func jumpSetGetter(l *Lexer.Lexer) {
+	token := l.Pick()
+	if token.Type != Lexer.OpenCurly {
+		return
+	}
+	token = l.Pick()
+	for token.Type != Lexer.CloseCurly {
+		l.Increse()
+		token = l.Pick()
+	}
+}
+func jumpUntilNextField(l *Lexer.Lexer) {
+	token := l.Pick()
+	if l.PickNext().Type != Lexer.Assignment && token.Type != Lexer.Assignment {
+		return
+	}
+	for token.Type != Lexer.Comma && token.Type != Lexer.Semicolon && token.Type != Lexer.CloseCircle {
+		l.Increse()
+		token = l.Pick()
+	}
 }
