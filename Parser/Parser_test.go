@@ -449,5 +449,21 @@ func Test_parseRecordWithDefault(t *testing.T) {
 	if gType.Type.(SimpleTypeNode).Type!=Number {
 		t.Error("test:class field type ")
 	}
-
+}
+func Test_parseErrorLoop(t *testing.T) {
+	_, err := ParseStr(`
+		export interface provaLoop{
+			/** Tipologia di operazione. True = Valida, False = Annulla validazione */
+			oooo?: boolean;
+			ff?: number;
+			MessageForWorkflow?: string;
+			/** Tipo di modello */
+			ddd: string;
+			/** Data invio manuale*/
+			bbb?: Date;
+			Protocol?: string;
+		}`)
+	if err == nil {
+		t.Error("test:error not found")
+	}
 }

@@ -21,6 +21,7 @@ func ConvertClass(class Parser.Class) (string, error) {
 	var e error
 	var f IConvert
 	for _, field := range class.Fields {
+		str.WriteString("  ")
 		if field.Nullable {
 			str.WriteString(field.Name + "? : ")
 		}else{
