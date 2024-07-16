@@ -16,7 +16,7 @@ type Lexer struct {
 	cur    int
 }
 
-const regex = `[{|}]|[<|>]|[(|)]|;|\?|,|\.|\:|\=|[\/\/]{2}.*|\/\*|\*\/|\w+`
+const regex = `\[.*\]|[{|}]|[<|>]|[(|)]|;|\?|,|\.|\:|\=|[\/\/]{2}.*|\/\*|\*\/|\w+`
 const (
 	Error  TokenKind = -2
 	Unknow TokenKind = -1
@@ -45,6 +45,9 @@ func New(input string) (*Lexer, error) {
 	var isMultilineComment bool = false
 	for _, v := range reg.FindAllString(input, -1) {
 		if v[0] == '/' && v[1] == '/'{
+			continue
+		}
+		if v[0] == '[' && v[len(v)-1] == ']'{
 			continue
 		}
 		if v[0] == '/' && v[1] == '*' {

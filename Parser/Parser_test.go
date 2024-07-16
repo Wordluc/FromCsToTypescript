@@ -403,6 +403,9 @@ func Test_parseRecordWithExtends(t *testing.T) {
 }
 func Test_parseRecord2(t *testing.T) {
 	classes, err := ParseStr(`
+	public abstract class Persona{
+		string cicc; 
+	}
 	record Lavoratore:Persona{
 		public int eta;
 	  }
@@ -410,8 +413,10 @@ func Test_parseRecord2(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-
-	class:= classes[0]
+  if classes[0].Name!="Persona"{
+		t.Error("test:class name not found")
+	}
+	class:= classes[1]
 	if class.Name!="Lavoratore" {
 		t.Error("test:class name not found")
 	}

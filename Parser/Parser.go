@@ -45,6 +45,7 @@ const (
 	Boolean
 )
 const classIdentifier = "class"
+const abstractIdentifier = "abstract"
 const recordIdentifier = "record"
 
 func isVisibilitySetter(t string) bool {
@@ -102,8 +103,10 @@ func Parse(l *Lexer.Lexer) ([]Class, error) {
 }
 
 func parse(token Lexer.Token,l *Lexer.Lexer) (Class, error) {
-	
-		if token.Val == classIdentifier {
+	  if token.Val == abstractIdentifier{
+		  l.Increse()
+			return parse(l.Pick(),l)
+	  }else if token.Val == classIdentifier {
 			return parseClass(l)
 		} else if token.Val == recordIdentifier {
 			return parseRecord(l)

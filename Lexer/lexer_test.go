@@ -103,7 +103,9 @@ func Test_TokenizingSimpleClassWithNullableProperty(t *testing.T) {
 }
 
 func Test_TokenizingSimpleRecord(t *testing.T) {
-	l, err := New("public record prova(string test,string test1);")
+	l, err := New(`
+	[cioa proprieta]
+	public record prova(string test,string test1);`)
 	if err != nil {
 		t.Fatal(err)
 	}
