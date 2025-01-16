@@ -102,6 +102,23 @@ func jumpSetGetter(l *Lexer.Lexer) {
 }
 func jumpUntilNextField(l *Lexer.Lexer) {
 	token := l.Pick()
+	if l.Pick().Type == Lexer.Assignment {
+		for {
+			if l.Pick().Type == Lexer.Semicolon {
+				l.Increse()
+				return
+			}
+			if l.Pick().Type == Lexer.CloseCircle && l.PickNext().Type == Lexer.Semicolon {
+				l.Increse()
+				l.Increse()
+				return
+			}
+			if l.PickNext().Type == Lexer.Comma {
+				return
+			}
+			l.Increse()
+		}
+	}
 	if l.PickNext().Type != Lexer.Assignment && token.Type != Lexer.Assignment {
 		return
 	}
