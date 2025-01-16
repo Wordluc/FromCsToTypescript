@@ -165,7 +165,6 @@ func Test_WriteTwoSimpleClass(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	println(str)
 	if !IsEqual(str, exp) {
 		t.Error("test:write simple class not found")
 	}
@@ -191,8 +190,53 @@ func Test_WriteTwoSimpleClass2(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	println(str)
 	if !IsEqual(str, exp) {
 		t.Error("test:write simple class not found")
+	}
+}
+
+func Test_WriteDto1(t *testing.T) {
+
+	str, err := Convert(`
+	public class TelematicToDownloadPDFSendingReport {
+		public IEnumerable<TelematicSendingReportToPDF> telematicDownloadSendingReport = Enumerable.Empty<TelematicSendingReportToPDF>();
+	}
+	  `)
+	exp := `
+	export interface TelematicToDownloadPDFSendingReport {
+	  telematicDownloadSendingReport : Array<TelematicSendingReportToPDF>;
+	}`
+	if err != nil {
+		panic(err)
+	}
+	println(str)
+	if !IsEqual(str, exp) {
+		t.Error("test:no match")
+	}
+}
+
+func Test_WriteDto2(t *testing.T) {
+
+	str, err := Convert(`
+	//qui mettere tutto su record. lasciando Errors e SupplyNumber. Comunque possono essere messi sul costruttore.
+	public record TelematicSendingReportToPDF(String ModelKind, TelematicSourceEnum Source, Int32? SupplyNumber, String? AdeProtocol, DateTime? CreationDate)
+	{
+		public IEnumerable<String> Errors                                  { get; init; };
+		public IEnumerable<TelematicCombinedDetailsForPDF> CombinedDetails { get; init; };
+	}
+	  `)
+	exp := `
+	  export interface Person1 {
+		  p : persona;
+		  age1 : number;
+    }
+		export interface Person2 {
+		  age2 : number;
+    }`
+	if err != nil {
+		panic(err)
+	}
+	if !IsEqual(str, exp) {
+		t.Error("test:no match")
 	}
 }

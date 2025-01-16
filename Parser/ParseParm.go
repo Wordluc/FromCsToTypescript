@@ -28,11 +28,8 @@ func parseParam(l *Lexer.Lexer) (FieldNode, error) {
 		return param, errors.New("param name not found")
 	}
 	param.Name = token.Val
-	println("name"+param.Name)
-	println("first"+ l.Pick().Val)
 	jumpSetGetter(l)
 	jumpUntilNextField(l)
-	println("after"+l.Pick().Val)
 	return param, nil
 }
 func parseType(l *Lexer.Lexer) (INode, error) {

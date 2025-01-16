@@ -360,7 +360,6 @@ func Test_parseClassWithExtends(t *testing.T) {
 		t.Error("test:class field name not found")
 	}
 	gType:=class.Fields[0]
-	println(gType.Type.(CustomTypeNode).Type)
 	if gType.Type.(CustomTypeNode).Type!="persona" {
 		t.Error("test:class field type ")
 	}
