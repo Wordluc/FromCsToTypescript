@@ -48,9 +48,9 @@ const classIdentifier = "class"
 const abstractIdentifier = "abstract"
 const recordIdentifier = "record"
 
-func isVisibilitySetter(t string) bool {
+func isModifier(t string) bool {
 	switch t {
-	case "public", "private", "protected":
+	case "public", "private", "protected","abstract":
 		return true
 	default:
 		return false
@@ -85,41 +85,32 @@ func Parse(l *Lexer.Lexer) ([]Class, error) {
 	for {
 		class := Class{}
 		var err error
-		token := l.Pick()
-    class, err = parse(token,l)
-		if err != nil {
-			token = l.PickNext()
-			class, err = parse(token,l)
-			if err != nil {
-				return []Class{}, err
-			}
-		}
+		class, err = parse(l)
 		classes = append(classes, class)
-		token = l.Pick()
-		if token.Type == Lexer.EOF {
+		if l.Pick().Type == Lexer.EOF {
 			return classes, nil
+		}
+		if err != nil{
+			return nil,err
 		}
 	}
 }
 
-func parse(token Lexer.Token,l *Lexer.Lexer) (Class, error) {
-	  if token.Val == abstractIdentifier{
-		  l.Increse()
-			return parse(l.Pick(),l)
-	  }else if token.Val == classIdentifier {
-			return parseClass(l)
-		} else if token.Val == recordIdentifier {
-			return parseRecord(l)
-		}
-		return Class{}, errors.New("class not found")
+func parse(l *Lexer.Lexer) (Class, error) {
+	for isModifier(l.Pick().Val) {
+		l.Increse()
+	}
+	if l.Pick().Val == classIdentifier {
+		return parseClass(l)
+	} else if l.Pick().Val == recordIdentifier {
+		return parseRecord(l)
+	}
+	return Class{}, errors.New("no record/class found")
 }
 
 func parseRecord(l *Lexer.Lexer) (Class, error) {
 	class := Class{}
 	token := l.Pick()
-	if isVisibilitySetter(token.Val) {
-		l.Increse()
-	}
 	l.Increse()
 	token = l.Pick()
 	if token.Type != Lexer.Word {
@@ -128,39 +119,35 @@ func parseRecord(l *Lexer.Lexer) (Class, error) {
 	l.Increse()
 	class.Name = token.Val
 	token = l.Pick()
-	if token.Type != Lexer.OpenCircle {
+	parms := []FieldNode{}
+	if l.Pick().Type == Lexer.OpenCircle {
 		l.Increse()
-		//l.Increse()
+		for l.Pick().Type != Lexer.CloseCircle {
+			parm, err := parseParmRecord(l)
+			if err != nil {
+				return class, err
+			}
+			parms = append(parms, parm)
+			if l.Pick().Type == Lexer.Comma{
+				l.Increse()
+			}
+		}
+		l.Increse()
 	}
-	l.Increse()
 	if l.Pick().Type == Lexer.Colons {
 		class.ExtendType, _ = parseExtendType(l)
-		l.Increse()
 	}
-	if l.Pick().Type == Lexer.OpenCurly {
+	if l.Pick().Type == Lexer.OpenCurly{
 		l.Increse()
-	}
-	token=l.Pick()
-	parms := []FieldNode{}
-	for token.Type != Lexer.CloseCircle && token.Type != Lexer.CloseCurly && token.Type != Lexer.Semicolon {
-
-		parm, err := parseParam(l)
-		if err != nil {
-			return class, err
+		tparm,e:=parseFieldsList(l)
+		if e!=nil{
+			return class,e
 		}
+		parms=append(parms,tparm...)
+	}else{
 		l.Increse()
-		parms = append(parms, parm)
-		if l.Pick().Type == Lexer.Colons {
-			class.ExtendType, err = parseExtendType(l)
-		}
-		token = l.Pick()
-		if l.Pick().Type == Lexer.OpenCurly {
-			l.Increse()
-		}
-
 	}
 	class.Fields = parms
-	token = l.GetAndGoNext()
 	return class, nil
 }
 func parseExtendType(l *Lexer.Lexer) ([]INode, error) {
@@ -176,12 +163,8 @@ func parseExtendType(l *Lexer.Lexer) ([]INode, error) {
 }
 func parseClass(l *Lexer.Lexer) (Class, error) {
 	class := Class{}
-	token := l.Pick()
-	if isVisibilitySetter(token.Val) {
-		l.Increse()
-	}
 	l.Increse()
-	token = l.Pick()
+	token := l.Pick()
 	if token.Type != Lexer.Word {
 		return class, errors.New("name not found")
 	}
@@ -200,28 +183,30 @@ func parseClass(l *Lexer.Lexer) (Class, error) {
 	if token.Type != Lexer.OpenCurly {
 		return class, errors.New("{ not found")
 	}
-	parms, err := parseParamsList(l)
+	parms, err := parseFieldsList(l)
 	if err != nil {
 		return class, err
 	}
 	class.Fields = parms
-	token = l.GetAndGoNext()
-	if token.Type != Lexer.CloseCurly {
-		return class, errors.New("} not found")
-	}
 	return class, nil
 }
-func parseParamsList(l *Lexer.Lexer) ([]FieldNode, error) {
+
+func parseFieldsList(l *Lexer.Lexer) ([]FieldNode, error) {
 	parms := []FieldNode{}
-	token := l.Pick()
-	for token.Type != Lexer.CloseCurly {
-		parm, err := parseParam(l)
+	for l.Pick().Type != Lexer.CloseCurly {
+		parm, err := parseField(l)
 		if err != nil {
 			return parms, err
 		}
 		parms = append(parms, parm)
+		if l.Pick().Type==Lexer.CloseCurly{
+			break
+		}
 		l.Increse()
-		token = l.Pick()
+	}
+	l.Increse()
+	if l.Pick().Type == Lexer.Semicolon{
+		l.Increse()
 	}
 	return parms, nil
 }

@@ -5,10 +5,11 @@ import (
 	"errors"
 )
 
-func parseParam(l *Lexer.Lexer) (FieldNode, error) {
+func parseField(l *Lexer.Lexer) (FieldNode, error) {
 	token := l.Pick()
+
 	param := FieldNode{}
-	if isVisibilitySetter(token.Val) {
+	if isModifier(token.Val) {
 		l.Increse()
 		token = l.Pick()
 	}
@@ -28,10 +29,42 @@ func parseParam(l *Lexer.Lexer) (FieldNode, error) {
 		return param, errors.New("param name not found")
 	}
 	param.Name = token.Val
-	jumpSetGetter(l)
-	jumpUntilNextField(l)
+	if l.Pick().Type == Lexer.OpenCurly { //getter setter
+		if JumpUntilOne(l, []Lexer.TokenKind{Lexer.CloseCurly}) {
+			l.Increse()
+		}
+	}
+	if l.Pick().Type == Lexer.Assignment || l.PickNext().Type == Lexer.Assignment {
+		JumpUntilOne(l, []Lexer.TokenKind{Lexer.Semicolon})
+	}
 	return param, nil
 }
+
+func parseParmRecord(l *Lexer.Lexer) (FieldNode, error) {
+	token := l.Pick()
+	param := FieldNode{}
+	Ptype, e := parseType(l)
+	if e != nil {
+		return param, e
+	}
+	param.Type = Ptype
+	l.Increse()
+	token = l.GetAndGoNext()
+	if token.Type == Lexer.QuestionMark {
+		param.Nullable = true
+		token = l.Pick()
+		l.Increse()
+	}
+	if token.Type != Lexer.Word {
+		return param, errors.New("param name not found")
+	}
+	param.Name = token.Val
+	if l.Pick().Type == Lexer.Assignment {
+		JumpUntilOne(l, []Lexer.TokenKind{Lexer.Comma, Lexer.CloseCircle})
+	}
+	return param, nil
+}
+
 func parseType(l *Lexer.Lexer) (INode, error) {
 	token := l.Pick()
 	Ptype := isBasicType(token.Val)
@@ -87,43 +120,4 @@ func parseGenericType(l *Lexer.Lexer) (GenericTypeNode, error) {
 		}
 	}
 	return gType, nil
-}
-
-func jumpSetGetter(l *Lexer.Lexer) {
-	token := l.Pick()
-	if token.Type != Lexer.OpenCurly {
-		return
-	}
-	token = l.Pick()
-	for token.Type != Lexer.CloseCurly {
-		l.Increse()
-		token = l.Pick()
-	}
-}
-func jumpUntilNextField(l *Lexer.Lexer) {
-	token := l.Pick()
-	if l.Pick().Type == Lexer.Assignment {
-		for {
-			if l.Pick().Type == Lexer.Semicolon {
-				l.Increse()
-				return
-			}
-			if l.Pick().Type == Lexer.CloseCircle && l.PickNext().Type == Lexer.Semicolon {
-				l.Increse()
-				l.Increse()
-				return
-			}
-			if l.PickNext().Type == Lexer.Comma {
-				return
-			}
-			l.Increse()
-		}
-	}
-	if l.PickNext().Type != Lexer.Assignment && token.Type != Lexer.Assignment {
-		return
-	}
-	for token.Type != Lexer.Comma && token.Type != Lexer.Semicolon && token.Type != Lexer.CloseCircle {
-		l.Increse()
-		token = l.Pick()
-	}
 }
